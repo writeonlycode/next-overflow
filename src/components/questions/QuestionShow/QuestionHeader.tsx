@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import QuestionVotes from "@/components/questions/shared/QuestionVotes";
+import QuestionVotes from "@/components/questions/_shared/QuestionVotes";
 import IconCalendar from "@/components/icons/IconCalendar";
 import IconClock from "@/components/icons/IconClock";
 

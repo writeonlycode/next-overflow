@@ -1,82 +1,42 @@
 import { GetServerSidePropsContext } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { fetchServerSideQuestionsWithMetadata, useQuestionsWithMetadata } from "@/lib/questions/questions";
+import ErrorPage from "@/components/_shared/ErrorPage";
+import LoadingPage from "@/components/_shared/LoadingPage";
 import QuestionsIndex from "@/components/questions/QuestionsIndex";
 import Navigation from "@/components/pagination/Navigation";
-import Loading from "@/components/icons/Loading";
 
 export default function QuestionsIndexPage({ page, limit, questionsFallback }: any) {
   const { data, count, error } = useQuestionsWithMetadata(page, limit, questionsFallback);
 
   if (error) {
-    console.error(error);
-
-    return (
-      <main className="flex grow flex-col container max-w-prose mx-auto px-8 mt-8">
-        <div className="">
-          <div className="flex justify-between mb-8">
-            <h2 className="text-3xl">Questions</h2>
-            <Link
-              href="/questions/new"
-              className="border border-frost-0 bg-frost-0 hover:bg-frost-0/90 text-night-0 text-center ease-in duration-100 rounded px-4 py-2"
-            >
-              Ask Question
-            </Link>
-          </div>
-          <div>
-            <div className="bg-aurora-0/60 border border-aurora-0 rounded text-snow-0 text-center text-sm my-8 p-4">
-              Ops, an error occured.
-            </div>
-          </div>
-        </div>
-      </main>
-    );
+    return <ErrorPage title={"Users | Next Overflow"} error={error} />;
   }
 
   if (!data) {
-    return (
-      <main className="flex grow flex-col container max-w-prose mx-auto px-8 mt-8">
-        <div className="">
-          <div className="flex justify-between mb-8">
-            <h2 className="text-3xl">Questions</h2>
-            <Link
-              href="/questions/new"
-              className="border border-frost-0 bg-frost-0 hover:bg-frost-0/90 text-night-0 text-center ease-in duration-100 rounded px-4 py-2"
-            >
-              Ask Question
-            </Link>
-          </div>
-          <div>
-            <div className="flex justify-center my-8 p-4">
-              <Loading />
-            </div>
-          </div>
-        </div>
-      </main>
-    );
+    return <LoadingPage title={"Users | Next Overflow"} />;
   }
 
   return (
-    <main className="flex grow flex-col container max-w-prose mx-auto px-8 mt-8">
-      <div className="">
-        <div className="flex justify-between mb-8">
-          <h2 className="text-3xl">Questions</h2>
-          <Link
-            href="/questions/new"
-            className="border border-frost-0 bg-frost-0 hover:bg-frost-0/90 text-night-0 text-center ease-in duration-100 rounded px-4 py-2"
-          >
-            Ask Question
-          </Link>
-        </div>
-        <div>
-          <QuestionsIndex questions={data} />
-        </div>
+    <>
+      <Head>
+        <title>Questions | Next Overflow</title>
+      </Head>
+      <div className="flex justify-between mb-8">
+        <h2 className="text-3xl">Questions</h2>
+        <Link
+          href="/questions/new"
+          className="border border-frost-0 bg-frost-0 hover:bg-frost-0/90 text-night-0 text-center ease-in duration-100 rounded px-4 py-2"
+        >
+          Ask Question
+        </Link>
       </div>
-      <Navigation
-        currentPage={page}
-        totalPages={Math.ceil(count / limit)}
-      />
-    </main>
+      <div>
+        <QuestionsIndex questions={data} />
+      </div>
+      <Navigation currentPage={page} totalPages={Math.ceil(count / limit)} />
+    </>
   );
 }
 

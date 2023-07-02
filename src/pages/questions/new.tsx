@@ -9,17 +9,17 @@ export default function QuestionNewPage() {
       <Head>
         <title>New Question | Next Overflow</title>
       </Head>
-      <main className="flex grow flex-col justify-center container max-w-prose mx-auto my-4 px-8">
-        <h2 className="text-2xl text-center mb-4">Ask a New Question</h2>
-        <QuestionNew />
-      </main>
+      <h2 className="text-2xl text-center mb-4">Ask a New Question</h2>
+      <QuestionNew />
     </>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const supabase = createServerSupabaseClient(context);
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session)
     return {
@@ -29,5 +29,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
 
-  return { props: { initialSession: session, } };
+  return { props: { initialSession: session } };
 }

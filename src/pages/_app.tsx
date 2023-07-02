@@ -5,17 +5,17 @@ import Head from "next/head";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 
-import Header from "@/components/header/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/_shared/Header";
+import Footer from "@/components/_shared/Footer";
 
 import "@/styles/globals.scss";
-import {SWRConfig} from "swr";
+import { SWRConfig } from "swr";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 
   return (
-    <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession} >
+    <SessionContextProvider supabaseClient={supabaseClient} initialSession={pageProps.initialSession}>
       <SWRConfig value={pageProps.fallback ? { fallback: pageProps.fallback } : {}}>
         <Head>
           <title>Next Overflow</title>
@@ -29,7 +29,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
         <div className="flex min-h-screen flex-col">
           <Header />
-          <Component {...pageProps} />
+          <main className="flex grow flex-col justify-center container max-w-prose mx-auto my-8 px-8">
+            <Component {...pageProps} />
+          </main>
           <Footer />
         </div>
       </SWRConfig>

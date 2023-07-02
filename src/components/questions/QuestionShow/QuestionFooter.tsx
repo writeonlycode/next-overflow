@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useUser } from "@supabase/auth-helpers-react";
 import QuestionDelete from "@/components/questions/QuestionDelete";
-import QuestionAuthor from "@/components/questions/shared/QuestionAuthor";
+import QuestionAuthor from "@/components/questions/_shared/QuestionAuthor";
 
 export default function QuestionFooter({ question }: any) {
   const user = useUser();

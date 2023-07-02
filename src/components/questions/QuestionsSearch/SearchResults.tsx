@@ -1,4 +1,4 @@
-import QuestionCard from "@/components/questions/shared/QuestionCard";
+import QuestionCard from "@/components/questions/_shared/QuestionCard";
 
 export default function SearchResults({ questions }: any) {
   return (

@@ -96,7 +96,7 @@ export function useQuestionWithMetadata(id: string, fallbackData?: any) {
 export function useInsertQuestion() {
   const supabase = useSupabaseClient();
 
-  const fetcher = async (key: string, { arg }: any) => {
+  const fetcher = async (_key: string, { arg }: any) => {
     const response = await insertResource(supabase, arg);
 
     if (response.error) {
@@ -118,7 +118,7 @@ export function useInsertQuestion() {
 export function useUpdateQuestion(id: any) {
   const supabase = useSupabaseClient();
 
-  const fetcher = async (key: string, { arg }: any) => {
+  const fetcher = async (_key: string, { arg }: any) => {
     const response = await updateResource(supabase, id, arg);
 
     if (response.error) {
@@ -220,7 +220,7 @@ async function fetchResource(supabase: any, id: string) {
 async function fetchResourceWithMetadata(supabase: any, id: string) {
   return supabase
     .from(resourceWithMetadata)
-    .select("*, profile:profiles_with_metadata(*), current_user_question_vote:questions_votes(*)")
+    .select("*, profile:profiles_with_metadata(*), current_user_question_vote(*)")
     .eq("id", id)
     .single();
 }

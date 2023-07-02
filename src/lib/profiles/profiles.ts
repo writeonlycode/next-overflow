@@ -6,6 +6,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { getPagination } from "@/lib/pagination/getPagination";
 
 const resource = "profiles";
+const resourceWithMetadata = "profiles_with_metadata";
 
 export function useProfiles(page: number, limit: number, fallbackData?: any) {
   const supabase = useSupabaseClient();
@@ -44,7 +45,7 @@ export function useProfile(id: string, fallbackData?: any) {
 export function useUpdateProfile(id: string) {
   const supabase = useSupabaseClient();
 
-  const fetcher = async (key: string, { arg }: any) => {
+  const fetcher = async (_key: string, { arg }: any) => {
     const response = await updateResource(supabase, id, arg);
 
     if (response.error) {
@@ -68,9 +69,19 @@ export async function fetchServerSideProfiles(context: GetServerSidePropsContext
   return await fetchResources(supabase, page, limit);
 }
 
+export async function fetchServerSideProfilesWithMetadata(context: GetServerSidePropsContext, page?: number, limit?: number) {
+  const supabase = createServerSupabaseClient(context);
+  return await fetchResourcesWithMetadata(supabase, page, limit);
+}
+
 export async function fetchServerSideProfile(context: GetServerSidePropsContext, id: string) {
   const supabase = createServerSupabaseClient(context);
   return await fetchResource(supabase, id);
+}
+
+export async function fetchServerSideProfileWithMetadata(context: GetServerSidePropsContext, id: string) {
+  const supabase = createServerSupabaseClient(context);
+  return await fetchResourceWithMetadata(supabase, id);
 }
 
 async function fetchResources(supabase: any, page = 1, limit = 10) {
@@ -82,7 +93,20 @@ async function fetchResources(supabase: any, page = 1, limit = 10) {
     .range(from, to);
 }
 
+async function fetchResourcesWithMetadata(supabase: any, page = 1, limit = 10) {
+  const { from, to } = getPagination(page, limit);
+
+  return supabase
+    .from(resourceWithMetadata)
+    .select("*", { count: "exact" })
+    .range(from, to);
+}
+
 async function fetchResource(supabase: any, id: string) {
+  return supabase.from(resource).select("*").eq("id", id).single();
+}
+
+async function fetchResourceWithMetadata(supabase: any, id: string) {
   return supabase.from(resource).select("*, questions_count:questions(count), answers_count:answers(count)").eq("id", id).single();
 }
 

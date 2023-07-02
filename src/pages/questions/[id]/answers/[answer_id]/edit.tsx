@@ -1,33 +1,29 @@
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { fetchServerSideAnswer, useAnswer } from "@/lib/answers/answers";
 import AnswerEdit from "@/components/answers/AnswerEdit";
 
-export default function AnswerEditPage({ answer }: any) {
-  const user = useUser();
-  const router = useRouter();
-
-  if (!user) {
-    router.push("/");
-  }
+export default function AnswerEditPage({ answer_id, answerFallback }: any) {
+  const { data } = useAnswer(answer_id, answerFallback);
 
   return (
     <>
       <Head>
-        <title>Edit Question | Next Overflow</title>
+        <title>Edit Answer | Next Overflow</title>
       </Head>
-      <main className="flex grow flex-col justify-center container max-w-prose mx-auto my-4 px-8">
-        <h2 className="text-2xl text-center mb-4">Ask a New Question</h2>
-        <AnswerEdit answer={answer} />
-      </main>
+      <h2 className="text-2xl text-center mb-4">Edit Answer</h2>
+      <AnswerEdit answer={data} />
     </>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const supabase = createServerSupabaseClient(context);
+
+  const {
+    query: { answer_id },
+  } = context;
 
   const {
     data: { session },
@@ -42,24 +38,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const { data, error } = await supabase
-    .from("answers")
-    .select("*", {})
-    .eq("id", context.query.answer_id)
-    .single();
+  const answerFallback = await fetchServerSideAnswer(context, answer_id as string);
 
-  if (error) {
-    console.error(error);
-
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  if (session.user.id !== data.profile_id) {
+  if (session.user.id !== answerFallback?.data?.profile_id) {
     return {
       redirect: {
         destination: "/",
@@ -69,9 +50,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   return {
-    props: {
-      initialSession: session,
-      answer: data,
-    },
+    props: { initialSession: session, answer_id, answerFallback },
   };
 }

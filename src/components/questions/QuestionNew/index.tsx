@@ -45,7 +45,7 @@ export default function QuestionNew() {
   let successElement = (
     <div className="absolute inset-0 flex items-center justify-center bg-night-0/50">
       <div className="bg-aurora-3/60 border border-aurora-3 rounded text-snow-0 text-center text-sm my-8 p-4">
-        Questions posted!
+        Question posted!
       </div>
     </div>
   );
